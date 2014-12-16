@@ -31,19 +31,19 @@ public class RefreshContentsScreen extends PopupScreen
 		{
 			public void run()
 			{
-				thread = new Thread(new UserInfoRunnable(params));
+				thread = new Thread(new QueryTranslatorRunnable(params));
 				thread.start();				
 			}
 		});
 	}
 
-	class UserInfoRunnable implements Runnable
+	class QueryTranslatorRunnable implements Runnable
 	{
 		private String from = "";
 		private String to = "";
 		private String q = "";
 
-		public UserInfoRunnable(Hashtable params)
+		public QueryTranslatorRunnable(Hashtable params)
 		{
 			from = (String) params.get("from");
 			to = (String) params.get("to");

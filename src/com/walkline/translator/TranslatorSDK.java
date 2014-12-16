@@ -39,13 +39,13 @@ public class TranslatorSDK
 		return result;
 	}
 
-	private JSONObject doRequest(String api, Hashtable args) throws Exception
+	private JSONObject doRequest(String api, Hashtable params) throws Exception
 	{
 		JSONObject result = null;
 		StringBuffer responseBuffer = null;
 
 		try {
-			responseBuffer = checkResponse(_http.doGet(api));
+			responseBuffer = checkResponse(_http.doGet(api, params));
 
 			if ((responseBuffer == null) || (responseBuffer.length() <= 0))
 			{

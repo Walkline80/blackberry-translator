@@ -30,16 +30,13 @@ public class VerticalButtonFieldSet extends Manager
     protected void paintBackground( Graphics g )
     {
         if( _drawPosition < 0 ) {
-            // it's like a list field, let the default background be drawn
             super.paintBackground( g );
             return;
         }
         
         int oldColour = g.getColor();
-        
-        //int background = g.isDrawingStyleSet( Graphics.DRAWSTYLE_FOCUS ) ? COLOR_BACKGROUND_FOCUS : COLOR_BACKGROUND;
-        int background = g.isDrawingStyleSet( Graphics.DRAWSTYLE_FOCUS ) ? COLOR_BACKGROUND_FOCUS : COLOR_BACKGROUND;
-        
+        int background = g.isDrawingStyleSet(Graphics.DRAWSTYLE_FOCUS) ? COLOR_BACKGROUND_FOCUS : COLOR_BACKGROUND;
+
         try {
             if( _drawPosition == 0 ) {
                 // Top
@@ -94,7 +91,7 @@ public class VerticalButtonFieldSet extends Manager
         int usedHeight = 0;
         int x;
         
-        for( int i = 0; i < numChildren; i++ )
+        for(int i = 0; i < numChildren; i++)
         {
             Field currentField = getField( i );
             int currentPreferredWidth = currentField.getPreferredWidth() + FieldDimensionUtilities.getBorderWidth( currentField );
@@ -113,15 +110,15 @@ public class VerticalButtonFieldSet extends Manager
             usedHeight += currentField.getHeight();
             prevTopMargin = currentField.getMarginBottom();
         }
-        
-        setExtent( maxWidth, usedHeight );
+
+        setExtent(maxWidth, usedHeight);
     }
-    
-    public void setDrawPosition( int drawPosition )
+
+    public void setDrawPosition(int drawPosition)
     {
         _drawPosition = drawPosition;
     }
-    
+
     protected boolean navigationMovement(int dx, int dy, int status, int time) 
     {
         int focusIndex = getFieldWithFocusIndex();                   

@@ -1,14 +1,9 @@
 package com.walkline.util.ui;
-//#preprocess
-
-
 
 import net.rim.device.api.ui.*;
 
 //#ifndef VER_4.1.0 | VER_4.2.0 | VER_4.2.1 | VER_4.3.0 | VER_4.5.0
 import net.rim.device.api.ui.decor.*;
-//#endif
-
 
 public class FieldDimensionUtilities
 {
@@ -73,5 +68,4 @@ public class FieldDimensionUtilities
       //#endif
         return height;
     }
-
 }

@@ -1,5 +1,6 @@
 package com.walkline.screen;
 
+import java.util.Hashtable;
 import java.util.Vector;
 
 import net.rim.device.api.system.ApplicationDescriptor;
@@ -11,29 +12,29 @@ import net.rim.device.api.ui.FontFamily;
 import net.rim.device.api.ui.FontManager;
 import net.rim.device.api.ui.Ui;
 import net.rim.device.api.ui.UiApplication;
-import net.rim.device.api.ui.component.AutoTextEditField;
+import net.rim.device.api.ui.XYEdges;
+import net.rim.device.api.ui.component.ButtonField;
+import net.rim.device.api.ui.component.ObjectChoiceField;
 import net.rim.device.api.ui.container.MainScreen;
 
-import com.walkline.app.TranslatorApp;
 import com.walkline.app.TranslatorAppConfig;
 import com.walkline.translator.TranslatorSDK;
 import com.walkline.translator.inf.QueryResult;
 import com.walkline.translator.inf.Result;
-import com.walkline.util.Enumerations.RefreshActions;
+import com.walkline.util.Enumerations.Languages;
 import com.walkline.util.Function;
 import com.walkline.util.ui.ForegroundManager;
-import com.walkline.util.ui.ListStyleButtonField;
-import com.walkline.util.ui.ListStyleButtonSet;
 import com.walkline.util.ui.MyTextField;
+import com.walkline.util.ui.VerticalButtonFieldSet;
 
 public final class TranslatorScreen extends MainScreen
 {
 	ForegroundManager _foreground = new ForegroundManager(0);
-	ListStyleButtonSet _listSet = new ListStyleButtonSet();
-	ListStyleButtonField _item;
 	TranslatorSDK _translator = TranslatorSDK.getInstance();
 	MyTextField _editSearch = new MyTextField();
 	MyTextField _editResult = new MyTextField();
+	ObjectChoiceField _choiceSource;
+	ObjectChoiceField _choiceDestination;
 
     public TranslatorScreen()
     {
@@ -48,57 +49,96 @@ public final class TranslatorScreen extends MainScreen
 			FontManager.getInstance().setApplicationFont(appFont);
 		} catch (ClassNotFoundException e) {}
 
-        _editSearch.setPadding(3, 3, 3, 3);
-        _editSearch.setMargin(10, 3, 3, 3);
-        _editResult.setPadding(3, 3, 3, 3);
-        _editResult.setMargin(10, 3, 3, 3);
-        add(_editSearch);
-        add(_editResult);
-
-        //_foreground.add(_toplistSet);
-        //add(_foreground);
+		createUI();
     }
 
-	private void searchSongs(final String keyword)
+    private void createUI()
+    {
+    	XYEdges xyEdges = new XYEdges(3, 3, 3, 3);
+        _editSearch.setPadding(xyEdges);
+        _editSearch.setMargin(xyEdges);
+        _editResult.setPadding(xyEdges);
+        _editResult.setMargin(xyEdges);
+//        _editResult.setEditable(false);
+
+        _choiceSource = new ObjectChoiceField("源语言：", Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);
+        _choiceDestination = new ObjectChoiceField("目标语言：", Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);
+
+        VerticalButtonFieldSet vbf = new VerticalButtonFieldSet(USE_ALL_WIDTH);
+        ButtonField btnQuery = new ButtonField("查询", ButtonField.CONSUME_CLICK | ButtonField.NEVER_DIRTY);
+        btnQuery.setChangeListener(new FieldChangeListener()
+        {
+			public void fieldChanged(Field field, int context)
+			{
+				if (context != FieldChangeListener.PROGRAMMATIC)
+				{
+					if (!_editSearch.getText().trim().equals(""))
+					{
+						queryTranslator();
+					} else {
+						_editSearch.setText("");
+						_editSearch.setFocus();
+					}
+				}
+			}
+		});
+
+        vbf.add(btnQuery);
+        _foreground.add(_editSearch);
+        _foreground.add(_editResult);
+        _foreground.add(_choiceSource);
+        _foreground.add(_choiceDestination);
+        _foreground.add(vbf);
+
+        add(_foreground);
+    }
+
+	private void queryTranslator()
 	{
 		UiApplication.getUiApplication().invokeLater(new Runnable()
     	{
 			public void run()
 			{
-				RefreshContentsScreen popupScreen = new RefreshContentsScreen(_translator, keyword, RefreshActions.SONGSLIST);
+				Hashtable params = new Hashtable();
+
+				params.put("from", Languages.choicesLanguagesValue[_choiceSource.getSelectedIndex()]);
+				params.put("to", Languages.choicesLanguagesValue[_choiceDestination.getSelectedIndex()]);
+				params.put("q", _editSearch.getText());
+
+				RefreshContentsScreen popupScreen = new RefreshContentsScreen(_translator, params);
 				UiApplication.getUiApplication().pushModalScreen(popupScreen);
 
-				QueryResult songsList = popupScreen.getQueryResult();
+				QueryResult resultList = popupScreen.getQueryResult();
 
 				if (popupScreen != null) {popupScreen = null;}
-				if (songsList != null) {refreshSongsList(songsList);}
+				if (resultList != null) {refreshResultList(resultList);}
 			}
 		});
 	}
 
-	private void refreshSongsList(QueryResult list)
+	private void refreshResultList(QueryResult list)
 	{
-		Vector songsList = list.getTranslateResult();
-		Result song;
+		Vector resultList = list.getTranslateResult();
+		Result result;
 
-		if (songsList.size() <= 0)
+		if (resultList.size() <= 0)
 		{
 			Function.errorDialog("No Result!");
 			return;
 		}
 
-		if (_listSet.getManager() == null) {_foreground.add(_listSet);}
-		if (_listSet.getFieldCount() > 0) {_listSet.deleteAll();}
-
-		for (int i=0; i<songsList.size(); i++)
+		StringBuffer sb = new StringBuffer();
+		for (int i=0; i<resultList.size(); i++)
 		{
-			song = (Result) songsList.elementAt(i);
-			if (song != null)
+			result = (Result) resultList.elementAt(i);
+			if (result != null)
 			{
-				_item = new ListStyleButtonField(song);
-				_listSet.add(_item);
+				sb.append(result.getDestination());
+				if (resultList.size() > 1) {sb.append("\n");}
 			}
 		}
+
+		_editResult.setText(sb.toString());
 	}
 
 	protected boolean keyChar(char key, int status, int time)

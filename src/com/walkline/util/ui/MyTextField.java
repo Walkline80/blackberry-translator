@@ -13,7 +13,7 @@ public class MyTextField extends AutoTextEditField
 {
 	public MyTextField()
 	{
-		super("", null, DEFAULT_MAXCHARS, USE_ALL_HEIGHT | USE_ALL_WIDTH);
+		super("", null, DEFAULT_MAXCHARS, USE_ALL_HEIGHT | USE_ALL_WIDTH | JUMP_FOCUS_AT_END);
 
 		XYEdges edge = new XYEdges(4, 4, 4, 4);
 		Border borderNormal = BorderFactory.createRoundedBorder(edge, 0xBBBBBB, Border.STYLE_SOLID);
