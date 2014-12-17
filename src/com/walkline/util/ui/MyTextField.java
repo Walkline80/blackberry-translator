@@ -2,38 +2,49 @@ package com.walkline.util.ui;
 
 import net.rim.device.api.ui.Color;
 import net.rim.device.api.ui.Font;
+import net.rim.device.api.ui.Manager;
 import net.rim.device.api.ui.XYEdges;
 import net.rim.device.api.ui.component.AutoTextEditField;
+import net.rim.device.api.ui.container.VerticalFieldManager;
 import net.rim.device.api.ui.decor.Background;
 import net.rim.device.api.ui.decor.BackgroundFactory;
 import net.rim.device.api.ui.decor.Border;
 import net.rim.device.api.ui.decor.BorderFactory;
 
-public class MyTextField extends AutoTextEditField
+public class MyTextField extends VerticalFieldManager
 {
-	public MyTextField()
-	{
-		super("", null, DEFAULT_MAXCHARS, USE_ALL_HEIGHT | USE_ALL_WIDTH | JUMP_FOCUS_AT_END);
+    private static final int fieldHeight = Font.getDefault().getHeight() * 3;
+    private AutoTextEditField textField = null;
 
-		XYEdges edge = new XYEdges(4, 4, 4, 4);
+    public MyTextField()
+    {
+        super(Manager.NO_VERTICAL_SCROLL);
+
+        XYEdges edge = new XYEdges(4, 4, 4, 4);
 		Border borderNormal = BorderFactory.createRoundedBorder(edge, 0xBBBBBB, Border.STYLE_SOLID);
 		Border borderFocus = BorderFactory.createRoundedBorder(edge, 0x0A9000, Border.STYLE_SOLID);
 		Background background = BackgroundFactory.createSolidBackground(Color.WHITE);
 
-		this.setBackground(background);
-		this.setBorder(VISUAL_STATE_NORMAL, borderNormal);
-		this.setBorder(VISUAL_STATE_FOCUS, borderFocus);
-	}
+		setBackground(background);
+		setBorder(VISUAL_STATE_NORMAL, borderNormal);
+		setBorder(VISUAL_STATE_FOCUS, borderFocus);
 
-	protected void layout(int width, int height)
-	{
-		super.layout(width, height);
-		super.setExtent(width, Font.getDefault().getHeight() * 4);
-	}
+        VerticalFieldManager vfm = new VerticalFieldManager(Manager.VERTICAL_SCROLL | Manager.VERTICAL_SCROLLBAR);
+        textField = new AutoTextEditField("", null, AutoTextEditField.DEFAULT_MAXCHARS, AutoTextEditField.JUMP_FOCUS_AT_END);
 
-	protected void displayFieldFullMessage() {}
+        vfm.add(textField);
+        add(vfm);
+    }
 
-    public void setDirty(boolean dirty) {}
+    public void sublayout(int width, int height)
+    {
+        super.sublayout(width, fieldHeight);
+        setExtent(width, fieldHeight);
+    }
 
-    public void setMuddy(boolean muddy) {}
+    public void setEditable(boolean editable) {textField.setEditable(editable);}
+
+    public String getText() {return textField.getText();}
+
+    public void setText(String text) {textField.setText(text);}
 }

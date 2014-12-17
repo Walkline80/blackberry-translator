@@ -54,12 +54,12 @@ public final class TranslatorScreen extends MainScreen
 
     private void createUI()
     {
-    	XYEdges xyEdges = new XYEdges(3, 3, 3, 3);
-        _editSearch.setPadding(xyEdges);
-        _editSearch.setMargin(xyEdges);
-        _editResult.setPadding(xyEdges);
-        _editResult.setMargin(xyEdges);
-//        _editResult.setEditable(false);
+    	XYEdges edges = new XYEdges(3, 3, 3, 3);
+        _editSearch.setPadding(edges);
+        _editSearch.setMargin(edges);
+        _editResult.setPadding(edges);
+        _editResult.setMargin(edges);
+        _editResult.setEditable(false);
 
         _choiceSource = new ObjectChoiceField("源语言：", Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);
         _choiceDestination = new ObjectChoiceField("目标语言：", Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);

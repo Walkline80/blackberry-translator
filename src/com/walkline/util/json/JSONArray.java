@@ -34,109 +34,60 @@ import java.io.Writer;
 import java.util.Hashtable;
 import java.util.Vector;
 
-/**
- * A JSONArray is an ordered sequence of values. Its external text form is a string wrapped in square brackets with commas separating the values. The internal form is an object having <code>get</code> and <code>opt</code> methods for accessing the values by index, and <code>put</code> methods for adding or replacing values. The values can be any of these types: <code>Boolean</code>, <code>JSONArray</code>, <code>JSONObject</code>, <code>Number</code>, <code>String</code>, or the <code>JSONObject.NULL object</code>.
- * <p>
- * The constructor can convert a JSON text into a Java object. The <code>toString</code> method converts to JSON text.
- * <p>
- * A <code>get</code> method returns a value if one can be found, and throws an exception if one cannot be found. An <code>opt</code> method returns a default value instead of throwing an exception, and so is useful for obtaining optional values.
- * <p>
- * The generic <code>get()</code> and <code>opt()</code> methods return an object which you can cast or query for type. There are also typed <code>get</code> and <code>opt</code> methods that do type checking and type coersion for you.
- * <p>
- * The texts produced by the <code>toString</code> methods strictly conform to JSON syntax rules. The constructors are more forgiving in the texts they will accept:
- * <ul>
- * <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may appear just before the closing bracket.</li>
- * <li>The <code>null</code> value will be inserted when there is <code>,</code>&nbsp;<small>(comma)</small> elision.</li>
- * <li>Strings may be quoted with <code>'</code>&nbsp;<small>(single quote)</small>.</li>
- * <li>Strings do not need to be quoted at all if they do not begin with a quote or single quote, and if they do not contain leading or trailing spaces, and if they do not contain any of these characters: <code>{ } [ ] / \ : , = ; #</code> and if they do not look like numbers and if they are not the reserved words <code>true</code>, <code>false</code>, or <code>null</code>.</li>
- * <li>Values can be separated by <code>;</code> <small>(semicolon)</small> as well as by <code>,</code> <small>(comma)</small>.</li>
- * <li>Numbers may have the <code>0-</code> <small>(octal)</small> or <code>0x-</code> <small>(hex)</small> prefix.</li>
- * <li>Comments written in the slashshlash, slashstar, and hash conventions will be ignored.</li>
- * </ul>
- * 
- * @author JSON.org
- * @version 2
- */
-public class JSONArray {
-
-	/**
-	 * The Vector where the JSONArray's properties are kept.
-	 */
+public class JSONArray
+{
 	private Vector myArrayList;
 
-	/**
-	 * Construct an empty JSONArray.
-	 */
-	public JSONArray() {
-		myArrayList = new Vector();
-	}
+	public JSONArray() {myArrayList = new Vector();}
 
-	/**
-	 * Construct a JSONArray from a JSONTokener.
-	 * 
-	 * @param x
-	 *            A JSONTokener
-	 * @throws JSONException
-	 *             If there is a syntax error.
-	 */
-	public JSONArray(JSONTokener x) throws JSONException {
+	public JSONArray(JSONTokener x) throws JSONException
+	{
 		this();
-		if (x.nextClean() != '[') {
-			throw x.syntaxError("A JSONArray text must start with '['");
-		}
-		if (x.nextClean() == ']') {
-			return;
-		}
+
+		if (x.nextClean() != '[') {throw x.syntaxError("A JSONArray text must start with '['");}
+		if (x.nextClean() == ']') {return;}
+
 		x.back();
-		for (;;) {
-			if (x.nextClean() == ',') {
+
+		for (;;)
+		{
+			if (x.nextClean() == ',')
+			{
 				x.back();
 				myArrayList.addElement(null);
 			} else {
 				x.back();
 				myArrayList.addElement(x.nextValue());
 			}
-			switch (x.nextClean()) {
-			case ';':
-			case ',':
-				if (x.nextClean() == ']') {
+
+			switch (x.nextClean())
+			{
+				case ';':
+				case ',':
+					if (x.nextClean() == ']') {return;}
+					x.back();
+					break;
+				case ']':
 					return;
-				}
-				x.back();
-				break;
-			case ']':
-				return;
-			default:
-				throw x.syntaxError("Expected a ',' or ']'");
+				default:
+					throw x.syntaxError("Expected a ',' or ']'");
 			}
 		}
 	}
 
-	/**
-	 * Construct a JSONArray from a source sJSON text.
-	 * 
-	 * @param string
-	 *            A string that begins with <code>[</code>&nbsp;<small>(left bracket)</small> and ends with <code>]</code>&nbsp;<small>(right bracket)</small>.
-	 * @throws JSONException
-	 *             If there is a syntax error.
-	 */
-	public JSONArray(String string) throws JSONException {
-		this(new JSONTokener(string));
-	}
+	public JSONArray(String string) throws JSONException {this(new JSONTokener(string));}
 
-	/**
-	 * Construct a JSONArray from a Collection.
-	 * 
-	 * @param collection
-	 *            A Collection.
-	 */
-	public JSONArray(Vector collection) {
-		if (collection == null) {
+	public JSONArray(Vector collection)
+	{
+		if (collection == null)
+		{
 			myArrayList = new Vector();
 		} else {
 			int size = collection.size();
 			myArrayList = new Vector(size);
-			for (int i = 0; i < size; i++) {
+
+			for (int i = 0; i < size; i++)
+			{
 				myArrayList.addElement(collection.elementAt(i));
 			}
 		}
