@@ -3,17 +3,22 @@ package com.walkline.screen;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import localization.TranslatorResource;
+import net.rim.device.api.i18n.ResourceBundle;
 import net.rim.device.api.system.ApplicationDescriptor;
 import net.rim.device.api.system.Characters;
+import net.rim.device.api.system.Clipboard;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.FieldChangeListener;
 import net.rim.device.api.ui.Font;
 import net.rim.device.api.ui.FontFamily;
 import net.rim.device.api.ui.FontManager;
+import net.rim.device.api.ui.MenuItem;
 import net.rim.device.api.ui.Ui;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.XYEdges;
 import net.rim.device.api.ui.component.ButtonField;
+import net.rim.device.api.ui.component.Menu;
 import net.rim.device.api.ui.component.ObjectChoiceField;
 import net.rim.device.api.ui.container.MainScreen;
 
@@ -27,8 +32,10 @@ import com.walkline.util.ui.ForegroundManager;
 import com.walkline.util.ui.MyTextField;
 import com.walkline.util.ui.VerticalButtonFieldSet;
 
-public final class TranslatorScreen extends MainScreen
+public final class TranslatorScreen extends MainScreen implements TranslatorResource
 {
+	private static ResourceBundle _bundle = ResourceBundle.getBundle(BUNDLE_ID, BUNDLE_NAME);
+
 	ForegroundManager _foreground = new ForegroundManager(0);
 	TranslatorSDK _translator = TranslatorSDK.getInstance();
 	MyTextField _editSearch = new MyTextField();
@@ -39,6 +46,8 @@ public final class TranslatorScreen extends MainScreen
     public TranslatorScreen()
     {
     	super (NO_VERTICAL_SCROLL | USE_ALL_HEIGHT | NO_SYSTEM_MENU_ITEMS);
+
+    	setDefaultClose(false);
 
     	String appVer = "v" + ApplicationDescriptor.currentApplicationDescriptor().getVersion();
         setTitle(TranslatorAppConfig.APP_TITLE + " - " + appVer);
@@ -61,11 +70,11 @@ public final class TranslatorScreen extends MainScreen
         _editResult.setMargin(edges);
         _editResult.setEditable(false);
 
-        _choiceSource = new ObjectChoiceField("源语言：", Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);
-        _choiceDestination = new ObjectChoiceField("目标语言：", Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);
+        _choiceSource = new ObjectChoiceField(getResString(UI_SOURCE_LANGUAGE), Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);
+        _choiceDestination = new ObjectChoiceField(getResString(UI_DESTINATION_LANGUAGE), Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);
 
         VerticalButtonFieldSet vbf = new VerticalButtonFieldSet(USE_ALL_WIDTH);
-        ButtonField btnQuery = new ButtonField("查询", ButtonField.CONSUME_CLICK | ButtonField.NEVER_DIRTY);
+        ButtonField btnQuery = new ButtonField(getResString(UI_QUERY), ButtonField.CONSUME_CLICK | ButtonField.NEVER_DIRTY);
         btnQuery.setChangeListener(new FieldChangeListener()
         {
 			public void fieldChanged(Field field, int context)
@@ -123,7 +132,7 @@ public final class TranslatorScreen extends MainScreen
 
 		if (resultList.size() <= 0)
 		{
-			Function.errorDialog("No Result!");
+			Function.errorDialog(getResString(MESSAGE_NO_RESULT));
 			return;
 		}
 
@@ -141,19 +150,67 @@ public final class TranslatorScreen extends MainScreen
 		_editResult.setText(sb.toString());
 	}
 
+	private String getResString(int key) {return _bundle.getString(key);}
+
+	MenuItem menuCopy = new MenuItem(_bundle, MENU_COPY, 100, 10)
+	{
+		public void run()
+		{
+			Clipboard cb = Clipboard.getClipboard();
+			cb.put(_editResult.getText());
+		}
+	};
+
+	MenuItem menuPaste = new MenuItem(_bundle, MENU_PASTE, 100, 10)
+	{
+		public void run()
+		{
+			Clipboard cb = Clipboard.getClipboard();
+			_editSearch.setText((String) cb.get());
+		}
+	};
+
+	MenuItem menuExit = new MenuItem(_bundle, MENU_EXIT, 10000, 1000)
+    {
+    	public void run() {Function.showExitDialog();}
+    };
+
+    protected void makeMenu(Menu menu, int instance)
+    {
+    	if (_editSearch.isFocus())
+    	{
+    		//menu.add(menuPaste);
+    		//menu.addSeparator();
+    	} else if (_editResult.isFocus()) {
+    		menu.add(menuCopy);
+    		menu.addSeparator();
+    	}
+
+    	menu.add(menuExit);
+
+    	super.makeMenu(menu, instance);
+    }
+
 	protected boolean keyChar(char key, int status, int time)
     {
-		if (getFieldWithFocus() instanceof ForegroundManager)
+		if (!_foreground.getFieldWithFocus().equals(_editSearch))
 		{
 			switch (key)
 			{
-    			case Characters.LATIN_CAPITAL_LETTER_L:
-    			case Characters.LATIN_SMALL_LETTER_L:
-    				//return true;
+				case Characters.LATIN_CAPITAL_LETTER_Q:
+				case Characters.LATIN_SMALL_LETTER_Q:
+					Function.showExitDialog();
+					return true;
 			}
 		}
 
     	return super.keyChar(key, status, time);
+    }
+
+    public boolean onClose()
+    {
+    	System.exit(0);
+    	return true;
     }
 
 	protected boolean onSavePrompt() {return true;}

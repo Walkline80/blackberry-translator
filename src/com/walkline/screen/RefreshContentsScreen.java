@@ -2,6 +2,9 @@ package com.walkline.screen;
 
 import java.util.Hashtable;
 
+import localization.TranslatorResource;
+
+import net.rim.device.api.i18n.ResourceBundle;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.system.Characters;
 import net.rim.device.api.ui.Field;
@@ -13,8 +16,10 @@ import net.rim.device.api.ui.container.VerticalFieldManager;
 import com.walkline.translator.TranslatorSDK;
 import com.walkline.translator.inf.QueryResult;
 
-public class RefreshContentsScreen extends PopupScreen
+public class RefreshContentsScreen extends PopupScreen implements TranslatorResource
 {
+	private static ResourceBundle _bundle = ResourceBundle.getBundle(BUNDLE_ID, BUNDLE_NAME);
+
 	private Thread thread = null;
 	private TranslatorSDK _translator;
 	private QueryResult _queryResult = null;
@@ -25,7 +30,7 @@ public class RefreshContentsScreen extends PopupScreen
 
 		_translator = translator;
 
-		add(new LabelField("Please wait....", Field.FIELD_HCENTER));
+		add(new LabelField(getResString(MESSAGE_PLEASE_WAIT), Field.FIELD_HCENTER));
 
 		UiApplication.getUiApplication().invokeLater(new Runnable()
 		{
@@ -36,6 +41,8 @@ public class RefreshContentsScreen extends PopupScreen
 			}
 		});
 	}
+
+	private String getResString(int key) {return _bundle.getString(key);}
 
 	class QueryTranslatorRunnable implements Runnable
 	{

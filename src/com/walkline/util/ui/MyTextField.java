@@ -30,7 +30,7 @@ public class MyTextField extends VerticalFieldManager
 		setBorder(VISUAL_STATE_FOCUS, borderFocus);
 
         VerticalFieldManager vfm = new VerticalFieldManager(Manager.VERTICAL_SCROLL | Manager.VERTICAL_SCROLLBAR);
-        textField = new AutoTextEditField("", null, AutoTextEditField.DEFAULT_MAXCHARS, AutoTextEditField.JUMP_FOCUS_AT_END);
+        textField = new AutoTextEditField("", null, AutoTextEditField.DEFAULT_MAXCHARS, AutoTextEditField.JUMP_FOCUS_AT_END | AutoTextEditField.NO_SWITCHING_INPUT);
 
         vfm.add(textField);
         add(vfm);

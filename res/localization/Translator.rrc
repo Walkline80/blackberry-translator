@@ -1,0 +1,8 @@
+MENU_COPY#0="Copy";
+MENU_EXIT#0="Q\u0332uit";
+MENU_PASTE#0="Paste";
+MESSAGE_NO_RESULT#0="No Result!";
+MESSAGE_PLEASE_WAIT#0="Please wait....";
+UI_DESTINATION_LANGUAGE#0="Destination Language:";
+UI_QUERY#0="Query";
+UI_SOURCE_LANGUAGE#0="Source Language:";
