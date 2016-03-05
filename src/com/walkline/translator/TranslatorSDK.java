@@ -25,10 +25,12 @@ public class TranslatorSDK
 		QueryResult result = null;
 		Hashtable params = new Hashtable();
 
+		params.put("q", q);
 		params.put("from", from);
 		params.put("to", to);
-		params.put("client_id", TranslatorConfig.client_ID);
-		params.put("q", q);
+		params.put("appid", TranslatorConfig.client_ID);
+		params.put("salt", TranslatorConfig.client_SALT);
+		params.put("sign", Function.calculateSign(q));
 
 		JSONObject jsonObject;
 		try {
@@ -82,13 +84,19 @@ public class TranslatorSDK
 
 						if (error_code.equals("52001"))
 						{
-							Function.errorDialog("TIMEOUT：超时（52001）【请调整文本字符长度】");
+							Function.errorDialog("请求超时，请重试！");
 							return null;
 						} else if (error_code.equals("52002")) {
-							Function.errorDialog("SYSTEM ERROR：翻译系统错误（52002）");
+							Function.errorDialog("系统错误，请稍后重试！");
 							return null;
 						} else if (error_code.equals("52003")) {
-							Function.errorDialog("UNAUTHORIZED USER：未授权的用户（52003）【请检查是否将api key输入错误】");
+							Function.errorDialog("未授权用户，请联系软件开发者！");
+							return null;
+						} else if (error_code.equals("54003")) {
+							Function.errorDialog("访问频率受限，请降低您的调用频率！");
+							return null;
+						} else if (error_code.equals("54004")) {
+							Function.errorDialog("账户余额不足，本月翻译字符数已用光！");
 							return null;
 						}
 
