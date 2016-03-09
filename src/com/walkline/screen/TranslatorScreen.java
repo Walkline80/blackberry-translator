@@ -70,8 +70,9 @@ public final class TranslatorScreen extends MainScreen implements TranslatorReso
         _editResult.setMargin(edges);
         _editResult.setEditable(false);
 
-        _choiceSource = new ObjectChoiceField(getResString(UI_SOURCE_LANGUAGE), Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);
-        _choiceDestination = new ObjectChoiceField(getResString(UI_DESTINATION_LANGUAGE), Languages.choicesLanguages, Languages.DEFAULT_LANGUAGE);
+        String[] choicesLanguages = getResStringArray(CONFIG_FROM_TO_LANGUAGES);
+        _choiceSource = new ObjectChoiceField(getResString(UI_SOURCE_LANGUAGE), choicesLanguages, Languages.DEFAULT_LANGUAGE);
+        _choiceDestination = new ObjectChoiceField(getResString(UI_DESTINATION_LANGUAGE), choicesLanguages, Languages.DEFAULT_LANGUAGE);
 
         VerticalButtonFieldSet vbf = new VerticalButtonFieldSet(USE_ALL_WIDTH);
         ButtonField btnQuery = new ButtonField(getResString(UI_QUERY), ButtonField.CONSUME_CLICK | ButtonField.NEVER_DIRTY);
@@ -151,8 +152,23 @@ public final class TranslatorScreen extends MainScreen implements TranslatorReso
 	}
 
 	private String getResString(int key) {return _bundle.getString(key);}
+	private String[] getResStringArray(int key) {return _bundle.getStringArray(key);}
 
-	MenuItem menuCopy = new MenuItem(_bundle, MENU_COPY, 100, 10)
+	MenuItem menuQuery = new MenuItem(_bundle, MENU_QUERY, 100, 10)
+	{
+		public void run()
+		{
+			if (!_editSearch.getText().trim().equals(""))
+			{
+				queryTranslator();
+			} else {
+				_editSearch.setText("");
+				_editSearch.setFocus();
+			}
+		}
+	};
+
+	MenuItem menuCopy = new MenuItem(_bundle, MENU_COPY, 100, 20)
 	{
 		public void run()
 		{
@@ -161,7 +177,7 @@ public final class TranslatorScreen extends MainScreen implements TranslatorReso
 		}
 	};
 
-	MenuItem menuPaste = new MenuItem(_bundle, MENU_PASTE, 100, 10)
+	MenuItem menuPaste = new MenuItem(_bundle, MENU_PASTE, 100, 30)
 	{
 		public void run()
 		{
@@ -179,8 +195,9 @@ public final class TranslatorScreen extends MainScreen implements TranslatorReso
     {
     	if (_editSearch.isFocus())
     	{
+    		menu.add(menuQuery);
     		//menu.add(menuPaste);
-    		//menu.addSeparator();
+    		menu.addSeparator();
     	} else if (_editResult.isFocus()) {
     		menu.add(menuCopy);
     		menu.addSeparator();

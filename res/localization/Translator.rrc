@@ -1,8 +1,49 @@
+CONFIG_FROM_TO_LANGUAGES#0={
+    "Auto Detection",
+    "Chinese",
+    "Traditional Chinese",
+    "English",
+    "Cantonese",
+    "Classical Chinese",
+    "Japanese",
+    "Korean",
+    "French",
+    "Spanish",
+    "Thai",
+    "Arabic",
+    "Russian",
+    "Portuguese",
+    "German",
+    "Italian",
+    "Greek",
+    "Dutch",
+    "Polish",
+    "Bulgarian",
+    "Estonian",
+    "Danish",
+    "Finnish",
+    "Czech",
+    "Romanian",
+    "Slovene",
+    "Swedish",
+    "Hungarian",
+};
+DIALOG_QUIT#0="Are you sure exit this app?";
+DIALOG_YES_NO#0={
+    "Y\u0332es",
+    "N\u0332o",
+};
+ERROR_CODE_BALANCE_NOT_ENOUGH#0="The account balance is not enough, and the number of translation characters has been used up this month!";
+ERROR_CODE_FREQUENCY_LIMITED#0="Access frequency is limited, please reduce request frequency!";
+ERROR_CODE_SYSTEM_ERROR#0="System error, please try again later!";
+ERROR_CODE_TIMEOUT#0="Request timed out, please try again later!";
+ERROR_CODE_UNAUTHORIZED_USER#0="Unauthorized user, please contact developer!";
 MENU_COPY#0="Copy";
-MENU_EXIT#0="Q\u0332uit";
+MENU_EXIT#0="E\u0332xit";
 MENU_PASTE#0="Paste";
+MENU_QUERY#0="Q\u0332uery";
 MESSAGE_NO_RESULT#0="No Result!";
 MESSAGE_PLEASE_WAIT#0="Please wait....";
-UI_DESTINATION_LANGUAGE#0="Destination Language:";
+UI_DESTINATION_LANGUAGE#0="Target Language:";
 UI_QUERY#0="Query";
 UI_SOURCE_LANGUAGE#0="Source Language:";

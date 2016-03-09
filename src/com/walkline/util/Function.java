@@ -2,14 +2,19 @@ package com.walkline.util;
 
 import java.io.UnsupportedEncodingException;
 
+import localization.TranslatorResource;
+
 import com.walkline.translator.TranslatorConfig;
 
+import net.rim.device.api.i18n.ResourceBundle;
 import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.component.Dialog;
 
-public class Function
+public class Function implements TranslatorResource
 {
+	private static ResourceBundle _bundle = ResourceBundle.getBundle(BUNDLE_ID, BUNDLE_NAME);
+
     public static void errorDialog(final String message)
     {
         UiApplication.getUiApplication().invokeAndWait(new Runnable()
@@ -24,8 +29,8 @@ public class Function
 		{
 			public void run()
 			{
-				String[] yesno = {"是 (Y\u0332)", "否 (N\u0332)"};
-				Dialog showDialog = new Dialog("确认退出？", yesno, null, 1, Bitmap.getPredefinedBitmap(Bitmap.QUESTION), 0);
+				String[] yesno = getResStringArray(DIALOG_YES_NO);
+				Dialog showDialog = new Dialog(getResString(DIALOG_QUIT), yesno, null, 1, Bitmap.getPredefinedBitmap(Bitmap.QUESTION), 0);
 
 				showDialog.doModal();
 				if (showDialog.getSelectedValue() == 0) {System.exit(0);}
@@ -45,4 +50,7 @@ public class Function
 
     	return md5.toLowerCase();
     }
+
+    private static String getResString(int key) {return _bundle.getString(key);}
+	private static String[] getResStringArray(int key) {return _bundle.getStringArray(key);}
 }
